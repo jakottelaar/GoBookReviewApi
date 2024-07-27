@@ -1,0 +1,189 @@
+basePath: /v1/api
+definitions:
+  book.CreateBookRequest:
+    properties:
+      author:
+        example: F. Scott Fitzgerald
+        type: string
+      isbn:
+        example: "9780743273565"
+        type: string
+      publishedYear:
+        example: 1925
+        type: integer
+      title:
+        example: The Great Gatsby
+        type: string
+    required:
+    - author
+    - isbn
+    - publishedYear
+    - title
+    type: object
+  book.CreateBookResponse:
+    properties:
+      author:
+        example: F. Scott Fitzgerald
+        type: string
+      createdAt:
+        example: "2024-01-01T00:00:00Z"
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        format: uuid
+        type: string
+      isbn:
+        example: "9780743273565"
+        type: string
+      publishedYear:
+        example: 1925
+        type: integer
+      title:
+        example: The Great Gatsby
+        type: string
+    type: object
+  book.GetBookResponse:
+    properties:
+      author:
+        example: F. Scott Fitzgerald
+        type: string
+      created_at:
+        example: "2024-01-01T00:00:00Z"
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        format: uuid
+        type: string
+      isbn:
+        example: "9780743273565"
+        type: string
+      published_year:
+        example: 1925
+        type: integer
+      title:
+        example: The Great Gatsby
+        type: string
+      updated_at:
+        example: "2024-01-01T00:00:00Z"
+        type: string
+    type: object
+  book.UpdateBookRequest:
+    properties:
+      author:
+        example: F. Scott Fitzgerald
+        type: string
+      isbn:
+        example: "9780743273565"
+        type: string
+      published_year:
+        example: 1925
+        type: integer
+      title:
+        example: The Great Gatsby
+        type: string
+    required:
+    - author
+    - isbn
+    - published_year
+    - title
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server Book Review server.
+  title: Book Review API
+  version: "1.0"
+paths:
+  /books:
+    post:
+      consumes:
+      - application/json
+      description: Create a new book with the provided details
+      parameters:
+      - description: Book details
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/book.CreateBookRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/book.CreateBookResponse'
+      summary: Create a new book
+      tags:
+      - books
+  /books/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a book by the provided ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      summary: Delete a book by ID
+      tags:
+      - books
+    get:
+      consumes:
+      - application/json
+      description: Get a book by the provided ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/book.GetBookResponse'
+      summary: Get a book by ID
+      tags:
+      - books
+    put:
+      consumes:
+      - application/json
+      description: Update a book with the provided details
+      parameters:
+      - description: Book ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Book details
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/book.UpdateBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/book.CreateBookResponse'
+      summary: Update a book by ID
+      tags:
+      - books
+schemes:
+- http
+swagger: "2.0"

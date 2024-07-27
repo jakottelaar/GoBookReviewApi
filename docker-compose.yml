@@ -1,0 +1,43 @@
+version: "3.8"
+services:
+  app:
+    env_file: .env
+    container_name: docker-book-review-app
+    build: .
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+  db:
+    container_name: book-review-db
+    env_file: .env
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${DEV_POSTGRES_DB}
+      POSTGRES_USER: ${DEV_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DEV_POSTGRES_PASSWORD}
+    ports:
+      - "6000:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  test_db:
+    container_name: book-review-db-test
+    env_file: .env
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${TEST_POSTGRES_DB}
+      POSTGRES_USER: ${TEST_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${TEST_POSTGRES_PASSWORD}
+    ports:
+      - "6001:5432"
+    volumes:
+      - test-db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+  test-db-data:

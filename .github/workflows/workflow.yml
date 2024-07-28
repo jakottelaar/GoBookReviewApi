@@ -47,9 +47,5 @@ jobs:
       - name: Run integration tests
         env:
           ENVIRONMENT: test
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_USER: postgres
-          DB_PASSWORD: postgres
-          DB_NAME: bookreviewapp_test
+          DATABASE_URL: ${{vars.DATABASE_URL}}
         run: go test -v -tags=integration ./...

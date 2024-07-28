@@ -47,5 +47,5 @@ jobs:
       - name: Run integration tests
         env:
           ENVIRONMENT: test
-          DATABASE_URL: ${{vars.DATABASE_URL}}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: go test -v -tags=integration ./...

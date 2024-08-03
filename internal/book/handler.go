@@ -122,7 +122,7 @@ func (h *BookHandler) GetBookById(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param id path string true "Book ID" format(uuid)
 // @Param book body UpdateBookRequest true "Book details"
-// @Success 200 {object} CreateBookResponse
+// @Success 200 {object} UpdateBookResponse
 // @Router /books/{id} [put]
 func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	id, err := common.GetIdFromRequest(r, "id")
@@ -168,13 +168,13 @@ func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := CreateBookResponse{
+	resp := UpdateBookResponse{
 		ID:            book.ID.String(),
 		Title:         book.Title,
 		Author:        book.Author,
 		PublishedYear: book.PublishedYear,
 		ISBN:          book.ISBN,
-		CreatedAt:     book.CreatedAt,
+		UpdatedAt:     book.UpdatedAt,
 	}
 
 	common.WriteJSON(w, http.StatusOK, common.Envelope{"book": resp}, nil)

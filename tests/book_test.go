@@ -104,6 +104,7 @@ func TestUpdateBookById(t *testing.T) {
 	assert.Equal(t, "Updated Book Author", updatedBook["author"].(string))
 	assert.Equal(t, float64(2021), updatedBook["published_year"].(float64))
 	assert.Equal(t, "9780743273565", updatedBook["isbn"].(string))
+	assert.Contains(t, updatedBook, "updated_at")
 }
 
 func TestDeleteBookById(t *testing.T) {

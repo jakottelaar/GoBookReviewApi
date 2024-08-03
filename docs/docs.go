@@ -115,7 +115,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/book.CreateBookResponse"
+                            "$ref": "#/definitions/book.UpdateBookResponse"
                         }
                     }
                 }
@@ -158,7 +158,7 @@ const docTemplate = `{
             "required": [
                 "author",
                 "isbn",
-                "publishedYear",
+                "published_year",
                 "title"
             ],
             "properties": {
@@ -170,7 +170,7 @@ const docTemplate = `{
                     "type": "string",
                     "example": "9780743273565"
                 },
-                "publishedYear": {
+                "published_year": {
                     "type": "integer",
                     "example": 1925
                 },
@@ -187,7 +187,7 @@ const docTemplate = `{
                     "type": "string",
                     "example": "F. Scott Fitzgerald"
                 },
-                "createdAt": {
+                "created_at": {
                     "type": "string",
                     "example": "2024-01-01T00:00:00Z"
                 },
@@ -200,7 +200,7 @@ const docTemplate = `{
                     "type": "string",
                     "example": "9780743273565"
                 },
-                "publishedYear": {
+                "published_year": {
                     "type": "integer",
                     "example": 1925
                 },
@@ -268,6 +268,36 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "The Great Gatsby"
+                }
+            }
+        },
+        "book.UpdateBookResponse": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string",
+                    "example": "F. Scott Fitzgerald"
+                },
+                "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "isbn": {
+                    "type": "string",
+                    "example": "9780743273565"
+                },
+                "published_year": {
+                    "type": "integer",
+                    "example": 1925
+                },
+                "title": {
+                    "type": "string",
+                    "example": "The Great Gatsby"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-01T00:00:00Z"
                 }
             }
         }

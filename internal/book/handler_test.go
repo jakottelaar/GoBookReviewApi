@@ -135,6 +135,64 @@ func TestCreateBookHandler(t *testing.T) {
 		assert.Contains(t, response["error"], "PublishedYear")
 		assert.Contains(t, response["error"], "ISBN")
 	})
+
+	t.Run("POST Book handler: Invalid published year", func(t *testing.T) {
+		reqBody := CreateBookRequest{
+			Title:         "Test Book",
+			Author:        "Test Author",
+			PublishedYear: 0,
+			ISBN:          "9780743273565",
+		}
+
+		body, _ := json.Marshal(reqBody)
+		req := httptest.NewRequest(http.MethodPost, "/v1/api/books", bytes.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+
+		w := httptest.NewRecorder()
+
+		handler.CreateBook(w, req)
+
+		var response map[string]interface{}
+
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+
+		assert.Equal(t, http.StatusUnprocessableEntity, w.Code)
+
+		assert.NoError(t, err)
+
+		assert.Contains(t, response, "error")
+		assert.Contains(t, response["error"], "PublishedYear")
+	})
+
+	t.Run("POST Book handler: Invalid ISBN", func(t *testing.T) {
+		reqBody := CreateBookRequest{
+			Title:         "Test Book",
+			Author:        "Test Author",
+			PublishedYear: 2004,
+			ISBN:          "invalid_isbn",
+		}
+
+		body, _ := json.Marshal(reqBody)
+		req := httptest.NewRequest(http.MethodPost, "/v1/api/books", bytes.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+
+		w := httptest.NewRecorder()
+
+		handler.CreateBook(w, req)
+
+		var response map[string]interface{}
+
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+
+		assert.Equal(t, http.StatusUnprocessableEntity, w.Code)
+
+		assert.NoError(t, err)
+
+		assert.Contains(t, response, "error")
+
+		assert.Contains(t, response["error"], "ISBN")
+
+	})
 }
 
 func TestGetBookHandler(t *testing.T) {

@@ -8,7 +8,7 @@ definitions:
       isbn:
         example: "9780743273565"
         type: string
-      publishedYear:
+      published_year:
         example: 1925
         type: integer
       title:
@@ -17,7 +17,7 @@ definitions:
     required:
     - author
     - isbn
-    - publishedYear
+    - published_year
     - title
     type: object
   book.CreateBookResponse:
@@ -25,7 +25,7 @@ definitions:
       author:
         example: F. Scott Fitzgerald
         type: string
-      createdAt:
+      created_at:
         example: "2024-01-01T00:00:00Z"
         type: string
       id:
@@ -35,7 +35,7 @@ definitions:
       isbn:
         example: "9780743273565"
         type: string
-      publishedYear:
+      published_year:
         example: 1925
         type: integer
       title:
@@ -86,6 +86,28 @@ definitions:
     - isbn
     - published_year
     - title
+    type: object
+  book.UpdateBookResponse:
+    properties:
+      author:
+        example: F. Scott Fitzgerald
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        format: uuid
+        type: string
+      isbn:
+        example: "9780743273565"
+        type: string
+      published_year:
+        example: 1925
+        type: integer
+      title:
+        example: The Great Gatsby
+        type: string
+      updated_at:
+        example: "2024-01-01T00:00:00Z"
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -180,7 +202,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/book.CreateBookResponse'
+            $ref: '#/definitions/book.UpdateBookResponse'
       summary: Update a book by ID
       tags:
       - books

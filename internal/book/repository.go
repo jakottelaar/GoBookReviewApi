@@ -75,12 +75,12 @@ func (r *bookRepository) Update(book *Book) (*Book, error) {
 		UPDATE books
 		SET title = $1, author = $2, published_year = $3, isbn = $4
 		WHERE id = $5
-		RETURNING created_at`
+		RETURNING updated_at`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := r.db.QueryRowContext(ctx, query, book.Title, book.Author, book.PublishedYear, book.ISBN, book.ID).Scan(&book.CreatedAt)
+	err := r.db.QueryRowContext(ctx, query, book.Title, book.Author, book.PublishedYear, book.ISBN, book.ID).Scan(&book.UpdatedAt)
 
 	if err != nil {
 		switch {

@@ -22,8 +22,10 @@ func SetupRoutes() *chi.Mux {
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), // The url pointing to API definition
 	))
 
-	// Setup book services
+	// Database
 	db := database.GetDB()
+
+	// Setup book services
 	bookRepository := book.NewBookRepository(db)
 	bookService := book.NewBookService(bookRepository)
 	bookHandler := book.NewBookHandler(bookService)

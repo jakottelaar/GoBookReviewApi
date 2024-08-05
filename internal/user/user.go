@@ -28,3 +28,9 @@ type CreateUserResponse struct {
 	Email     string    `json:"email" example:"exampleuser@mail.com"`
 	CreatedAt time.Time `json:"created_at" example:"2024-01-01T00:00:00Z"`
 }
+
+type UpdateUserRequest struct {
+	Username string `json:"username" validate:"required" example:"exampleuser"`
+	Email    string `json:"email" validate:"required,email" example:"exampleuser@mail.com"`
+	Password string `json:"password" validate:"required" example:"password"`
+}

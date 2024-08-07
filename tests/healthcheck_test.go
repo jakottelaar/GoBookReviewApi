@@ -1,6 +1,3 @@
-//go:build integration
-// +build integration
-
 package tests
 
 import (
@@ -19,6 +16,7 @@ import (
 var (
 	testServer           *httptest.Server
 	baseBooksEndpointUrl string
+	baseAuthEndpointURL  string
 )
 
 func TestMain(m *testing.M) {
@@ -40,6 +38,7 @@ func TestMain(m *testing.M) {
 	testServer = httptest.NewServer(routes)
 
 	baseBooksEndpointUrl = testServer.URL + "/v1/api/books/"
+	baseAuthEndpointURL = testServer.URL + "/v1/api/auth/"
 
 	m.Run()
 

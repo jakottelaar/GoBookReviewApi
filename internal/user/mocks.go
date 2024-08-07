@@ -30,11 +30,6 @@ func (m *MockUserRepository) Delete(id string) error {
 	return args.Error(0)
 }
 
-func (m *MockUserService) Create(req *CreateUserRequest) (*User, error) {
-	args := m.Called(req)
-	return args.Get(0).(*User), args.Error(1)
-}
-
 func (m *MockUserService) GetUserByEmail(email string) (*User, error) {
 	args := m.Called(email)
 	return args.Get(0).(*User), args.Error(1)

@@ -6,6 +6,7 @@ import (
 
 type UserRepository interface {
 	FindByEmail(email string) (*User, error)
+	FindById(id string) (*User, error)
 	Save(user *User) (*User, error)
 	Update(user *User) (*User, error)
 	Delete(id string) error
@@ -30,6 +31,22 @@ func (r *userRepository) FindByEmail(email string) (*User, error) {
 	WHERE email = $1`
 
 	err := r.db.QueryRow(query, email).Scan(&user.ID, &user.Password)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r *userRepository) FindById(id string) (*User, error) {
+	var user User
+
+	query := `
+	SELECT id, username, email, created_at FROM users
+	WHERE id = $1`
+
+	err := r.db.QueryRow(query, id).Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt)
 
 	if err != nil {
 		return nil, err

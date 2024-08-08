@@ -25,7 +25,7 @@ func NewAuthService(repo user.UserRepository) AuthService {
 	}
 }
 
-var tokenAuth *jwtauth.JWTAuth
+var TokenAuth *jwtauth.JWTAuth
 
 func (s *authService) Login(req *LoginRequest) (string, error) {
 
@@ -39,9 +39,9 @@ func (s *authService) Login(req *LoginRequest) (string, error) {
 		return "", err
 	}
 
-	tokenAuth = jwtauth.New("HS256", []byte("secret"), nil, jwt.WithAcceptableSkew(30*time.Second))
+	TokenAuth = jwtauth.New("HS256", []byte("secret"), nil, jwt.WithAcceptableSkew(30*time.Second))
 
-	_, tokenString, _ := tokenAuth.Encode(map[string]interface{}{"user_id": user.ID}) //Handle err or security risk?
+	_, tokenString, _ := TokenAuth.Encode(map[string]interface{}{"user_id": user.ID}) //Handle err or security risk?
 
 	return tokenString, nil
 

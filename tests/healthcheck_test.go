@@ -15,8 +15,9 @@ import (
 
 var (
 	testServer           *httptest.Server
-	baseBooksEndpointUrl string
 	baseAuthEndpointURL  string
+	baseBooksEndpointURL string
+	baseUserEndpointURL  string
 )
 
 func TestMain(m *testing.M) {
@@ -37,8 +38,9 @@ func TestMain(m *testing.M) {
 
 	testServer = httptest.NewServer(routes)
 
-	baseBooksEndpointUrl = testServer.URL + "/v1/api/books/"
 	baseAuthEndpointURL = testServer.URL + "/v1/api/auth/"
+	baseBooksEndpointURL = testServer.URL + "/v1/api/books/"
+	baseUserEndpointURL = testServer.URL + "/v1/api/users/"
 
 	m.Run()
 

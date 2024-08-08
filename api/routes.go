@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/jakottelaar/gobookreviewapp/internal/auth"
 	"github.com/jakottelaar/gobookreviewapp/internal/book"
 	"github.com/jakottelaar/gobookreviewapp/internal/user"
@@ -27,6 +28,9 @@ func SetupRoutes() *chi.Mux {
 	// Database
 	db := database.GetDB()
 
+	//JWT
+	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
+
 	// Setup book services
 	bookRepository := book.NewBookRepository(db)
 	bookService := book.NewBookService(bookRepository)
@@ -35,6 +39,9 @@ func SetupRoutes() *chi.Mux {
 	userRepository := user.NewUserRepository(db)
 	authService := auth.NewAuthService(userRepository)
 	authHandler := auth.NewAuthHandler(authService)
+
+	userService := user.NewUserService(userRepository)
+	userHandler := user.NewUserHandler(userService)
 
 	// Health check
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
@@ -52,6 +59,11 @@ func SetupRoutes() *chi.Mux {
 		r.Route("/auth", func(r chi.Router) {
 			r.Post("/login", authHandler.Login)
 			r.Post("/register", authHandler.Register)
+		})
+		r.Route("/users", func(r chi.Router) {
+			r.Use(jwtauth.Verifier(tokenAuth))
+			r.Use(jwtauth.Authenticator(tokenAuth))
+			r.Get("/profile", userHandler.GetUserProfile)
 		})
 	})
 

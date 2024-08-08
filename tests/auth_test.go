@@ -40,3 +40,21 @@ func TestRegisterUser(t *testing.T) {
 	assert.NotEmpty(t, user["created_at"])
 
 }
+
+func TestLoginUser(t *testing.T) {
+
+	reqBody := `{
+		"email": "test@mail.com",
+        "password": "secretpass1234!"
+	}`
+
+	req, err := http.NewRequest("POST", baseAuthEndpointURL+"login", strings.NewReader(reqBody))
+	require.NoError(t, err)
+
+	res, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+	defer res.Body.Close()
+
+	require.Equal(t, http.StatusOK, res.StatusCode)
+
+}

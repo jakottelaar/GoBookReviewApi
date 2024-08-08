@@ -10,12 +10,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var mockRepo = new(user.MockUserRepository)
+var service = NewAuthService(mockRepo)
+
 func TestRegisterService(t *testing.T) {
 
-	mockRepo := new(user.MockUserRepository)
-	service := NewAuthService(mockRepo)
-
-	t.Run("Register user service: Successfully register a user", func(t *testing.T) {
+	t.Run("Register auth service: Successfully register a user", func(t *testing.T) {
 		createReq := &RegisterRequest{
 			Username: "Test User",
 			Email:    "testuser@mail.com",
@@ -43,4 +43,28 @@ func TestRegisterService(t *testing.T) {
 
 	})
 
+}
+
+func TestLoginService(t *testing.T) {
+
+	t.Run("Login auth service: Successfully login a user", func(t *testing.T) {
+		loginReq := &LoginRequest{
+			Email:    "testuser@mail.com",
+			Password: "password",
+		}
+
+		expectedUser := &user.User{
+			ID:       uuid.New(),
+			Password: "$argon2id$v=19$m=65536,t=3,p=2$c29tZXNhbHQ$RdescudvJCsgt3ub+b+dWRWJTmaaJObG",
+		}
+
+		mockRepo.On("FindByEmail", "testuser@mail.com").Return(expectedUser, nil)
+
+		result, err := service.Login(loginReq)
+
+		require.NoError(t, err)
+		assert.NotEmpty(t, result)
+
+		mockRepo.AssertExpectations(t)
+	})
 }

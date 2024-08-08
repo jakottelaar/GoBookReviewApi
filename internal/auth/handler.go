@@ -17,6 +17,41 @@ func NewAuthHandler(service AuthService) *AuthHandler {
 	}
 }
 
+func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+
+	var req LoginRequest
+
+	err := common.ReadJSON(w, r, &req)
+	if err != nil {
+		common.BadRequestResponse(w, r, err)
+		return
+	}
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+
+	err = validate.Struct(req)
+
+	if err != nil {
+		errors := make(map[string]string)
+
+		for _, err := range err.(validator.ValidationErrors) {
+			errors[err.Field()] = err.Tag()
+		}
+
+		common.FailedValidationResponse(w, r, errors)
+		return
+	}
+
+	token, err := h.service.Login(&req)
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	common.WriteJSON(w, http.StatusOK, common.Envelope{"access_token": token}, nil)
+
+}
+
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	var req RegisterRequest

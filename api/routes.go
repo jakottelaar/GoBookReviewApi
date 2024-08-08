@@ -50,6 +50,7 @@ func SetupRoutes() *chi.Mux {
 			r.Delete("/{id}", bookHandler.DeleteBook)
 		})
 		r.Route("/auth", func(r chi.Router) {
+			r.Post("/login", authHandler.Login)
 			r.Post("/register", authHandler.Register)
 		})
 	})

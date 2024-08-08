@@ -43,3 +43,28 @@ func (h *UserHandler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	common.WriteJSON(w, http.StatusOK, common.Envelope{"user": resp}, nil)
 
 }
+
+func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+
+	_, claims, err := jwtauth.FromContext(r.Context())
+
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	id := claims["user_id"]
+	err = h.service.Delete(id.(string))
+	if err != nil {
+		switch err {
+		case common.ErrNotFound:
+			common.NotFoundResponse(w, r)
+		default:
+			common.ServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	common.WriteJSON(w, http.StatusOK, common.Envelope{"message": "user deleted"}, nil)
+
+}

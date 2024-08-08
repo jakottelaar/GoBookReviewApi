@@ -210,6 +210,6 @@ func (h *BookHandler) DeleteBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	common.WriteJSON(w, http.StatusOK, common.Envelope{"message": "Successfully deleted book"}, nil)
+	common.WriteJSON(w, http.StatusOK, common.Envelope{"message": "book deleted"}, nil)
 
 }

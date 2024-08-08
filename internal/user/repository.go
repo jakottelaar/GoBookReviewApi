@@ -1,7 +1,11 @@
 package user
 
 import (
+	"context"
 	"database/sql"
+	"time"
+
+	"github.com/jakottelaar/gobookreviewapp/pkg/common"
 )
 
 type UserRepository interface {
@@ -76,5 +80,28 @@ func (r *userRepository) Update(user *User) (*User, error) {
 }
 
 func (r *userRepository) Delete(id string) error {
+
+	query := `
+		DELETE FROM users 
+		WHERE id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := r.db.ExecContext(ctx, query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return common.ErrNotFound
+	}
+
 	return nil
+
 }

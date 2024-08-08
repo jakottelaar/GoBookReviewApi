@@ -45,5 +45,22 @@ func (u *userService) Update(id string, user *UpdateUserRequest) (*User, error) 
 }
 
 func (u *userService) Delete(id string) error {
-	panic("unimplemented")
+
+	_, err := u.repo.FindById(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, common.ErrNotFound):
+			return common.ErrNotFound
+		default:
+			return err
+		}
+	}
+
+	err = u.repo.Delete(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }

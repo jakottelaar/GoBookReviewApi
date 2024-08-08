@@ -54,3 +54,42 @@ func TestFindUserById(t *testing.T) {
 	})
 
 }
+
+func TestDeleteUser(t *testing.T) {
+
+	t.Run("Delete user by id user service: Successfully delete user", func(t *testing.T) {
+		userId := uuid.New()
+
+		existingUser := &User{
+			ID:        userId,
+			Username:  "Test User",
+			Email:     "test@mail.com",
+			CreatedAt: time.Now(),
+		}
+
+		mockRepo.On("FindById", userId.String()).Return(existingUser, nil)
+		mockRepo.On("Delete", userId.String()).Return(nil)
+
+		err := service.Delete(userId.String())
+
+		require.NoError(t, err)
+
+		mockRepo.AssertExpectations(t)
+
+	})
+
+	t.Run("Delete user by id user service: User not found", func(t *testing.T) {
+		userId := uuid.New()
+
+		mockRepo.On("FindById", userId.String()).Return((*User)(nil), common.ErrNotFound)
+
+		err := service.Delete(userId.String())
+
+		require.Error(t, err)
+		assert.Equal(t, common.ErrNotFound, err)
+
+		mockRepo.AssertExpectations(t)
+
+	})
+
+}

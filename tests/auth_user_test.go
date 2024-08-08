@@ -95,3 +95,18 @@ func TestGetUser(t *testing.T) {
 	assert.NotEmpty(t, user["created_at"])
 
 }
+
+func TestDeleteUser(t *testing.T) {
+
+	req, err := http.NewRequest("DELETE", baseUserEndpointURL, nil)
+	require.NoError(t, err)
+
+	req.Header.Set("Authorization", "Bearer "+AccessToken)
+
+	res, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+	defer res.Body.Close()
+
+	assert.Equal(t, http.StatusOK, res.StatusCode)
+
+}

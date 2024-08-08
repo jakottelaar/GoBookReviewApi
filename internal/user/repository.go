@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/jakottelaar/gobookreviewapp/pkg/common"
@@ -76,7 +77,28 @@ func (r *userRepository) Save(user *User) (*User, error) {
 }
 
 func (r *userRepository) Update(user *User) (*User, error) {
-	return nil, nil
+
+	query := `
+		UPDATE users 
+		SET username = $1, email = $2
+		WHERE id = $3
+		RETURNING updated_at`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := r.db.QueryRowContext(ctx, query, user.Username, user.Email, user.ID).Scan(&user.UpdatedAt)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, common.ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return user, nil
+
 }
 
 func (r *userRepository) Delete(id string) error {

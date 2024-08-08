@@ -1,8 +1,10 @@
 package user
 
 import (
+	"database/sql"
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/jakottelaar/gobookreviewapp/pkg/common"
 )
 
@@ -41,7 +43,35 @@ func (u *userService) FindById(id string) (*User, error) {
 }
 
 func (u *userService) Update(id string, user *UpdateUserRequest) (*User, error) {
-	panic("unimplemented")
+	_, err := u.repo.FindById(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, common.ErrNotFound):
+			return nil, common.ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	updatedUser := &User{
+		ID:       uuid.MustParse(id),
+		Username: user.Username,
+		Email:    user.Email,
+	}
+
+	updatedUser, err = u.repo.Update(updatedUser)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, common.ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return updatedUser, nil
+
 }
 
 func (u *userService) Delete(id string) error {

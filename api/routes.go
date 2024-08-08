@@ -64,6 +64,7 @@ func SetupRoutes() *chi.Mux {
 			r.Use(jwtauth.Verifier(tokenAuth))
 			r.Use(jwtauth.Authenticator(tokenAuth))
 			r.Get("/profile", userHandler.GetUserProfile)
+			r.Put("/profile", userHandler.UpdateUser)
 			r.Delete("/", userHandler.DeleteUser)
 		})
 	})

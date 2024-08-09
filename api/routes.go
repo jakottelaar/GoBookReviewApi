@@ -35,17 +35,19 @@ func SetupRoutes() *chi.Mux {
 	//JWT
 	tokenAuth := jwtauth.New("HS256", []byte(jwtSecret), nil)
 
-	// Setup book services
-	bookRepository := book.NewBookRepository(db)
-	bookService := book.NewBookService(bookRepository)
-	bookHandler := book.NewBookHandler(bookService)
-
+	// Setup auth services
 	userRepository := user.NewUserRepository(db)
 	authService := auth.NewAuthService(userRepository)
 	authHandler := auth.NewAuthHandler(authService)
 
+	// Setup user services
 	userService := user.NewUserService(userRepository)
 	userHandler := user.NewUserHandler(userService)
+
+	// Setup book services
+	bookRepository := book.NewBookRepository(db)
+	bookService := book.NewBookService(bookRepository)
+	bookHandler := book.NewBookHandler(bookService, userService)
 
 	// Health check
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
@@ -54,12 +56,6 @@ func SetupRoutes() *chi.Mux {
 
 	// API routes
 	r.Route("/v1/api", func(r chi.Router) {
-		r.Route("/books", func(r chi.Router) {
-			r.Post("/", bookHandler.CreateBook)
-			r.Get("/{id}", bookHandler.GetBookById)
-			r.Put("/{id}", bookHandler.UpdateBook)
-			r.Delete("/{id}", bookHandler.DeleteBook)
-		})
 		r.Route("/auth", func(r chi.Router) {
 			r.Post("/login", authHandler.Login)
 			r.Post("/register", authHandler.Register)
@@ -70,6 +66,14 @@ func SetupRoutes() *chi.Mux {
 			r.Get("/profile", userHandler.GetUserProfile)
 			r.Put("/profile", userHandler.UpdateUser)
 			r.Delete("/", userHandler.DeleteUser)
+		})
+		r.Route("/books", func(r chi.Router) {
+			r.Use(jwtauth.Verifier(tokenAuth))
+			r.Use(jwtauth.Authenticator(tokenAuth))
+			r.Post("/", bookHandler.CreateBook)
+			r.Get("/{id}", bookHandler.GetBookById)
+			r.Put("/{id}", bookHandler.UpdateBook)
+			r.Delete("/{id}", bookHandler.DeleteBook)
 		})
 	})
 

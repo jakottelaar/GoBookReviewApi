@@ -10,8 +10,8 @@ type MockBookService struct {
 	mock.Mock
 }
 
-func (m *MockBookService) Create(req *CreateBookRequest) (*Book, error) {
-	args := m.Called(req)
+func (m *MockBookService) Create(req *CreateBookRequest, userId string) (*Book, error) {
+	args := m.Called(req, userId)
 	return args.Get(0).(*Book), args.Error(1)
 }
 

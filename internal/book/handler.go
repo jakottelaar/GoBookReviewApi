@@ -3,17 +3,21 @@ package book
 import (
 	"net/http"
 
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/go-playground/validator/v10"
+	"github.com/jakottelaar/gobookreviewapp/internal/user"
 	"github.com/jakottelaar/gobookreviewapp/pkg/common"
 )
 
 type BookHandler struct {
-	service BookService
+	bookService BookService
+	userService user.UserService
 }
 
-func NewBookHandler(service BookService) *BookHandler {
+func NewBookHandler(bookService BookService, userService user.UserService) *BookHandler {
 	return &BookHandler{
-		service: service,
+		bookService: bookService,
+		userService: userService,
 	}
 }
 
@@ -27,9 +31,23 @@ func NewBookHandler(service BookService) *BookHandler {
 // @Success 201 {object} CreateBookResponse
 // @Router /books [post]
 func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {
+
+	_, claims, err := jwtauth.FromContext(r.Context())
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	id := claims["user_id"]
+	user, err := h.userService.FindById(id.(string))
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
+
 	var req CreateBookRequest
 
-	err := common.ReadJSON(w, r, &req)
+	err = common.ReadJSON(w, r, &req)
 
 	if err != nil {
 		common.BadRequestResponse(w, r, err)
@@ -51,7 +69,7 @@ func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdBook, err := h.service.Create(&req)
+	createdBook, err := h.bookService.Create(&req, user.ID.String())
 
 	if err != nil {
 		common.ServerErrorResponse(w, r, err)
@@ -65,6 +83,7 @@ func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 		PublishedYear: createdBook.PublishedYear,
 		ISBN:          createdBook.ISBN,
 		CreatedAt:     createdBook.CreatedAt,
+		UserID:        createdBook.UserId.String(),
 	}
 
 	common.WriteJSON(w, http.StatusCreated, common.Envelope{"book": resp}, nil)
@@ -88,7 +107,7 @@ func (h *BookHandler) GetBookById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	book, err := h.service.GetBookById(id)
+	book, err := h.bookService.GetBookById(id)
 
 	if err != nil {
 		switch err {
@@ -156,7 +175,7 @@ func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	book, err := h.service.Update(id, &req)
+	book, err := h.bookService.Update(id, &req)
 
 	if err != nil {
 		switch err {
@@ -198,7 +217,7 @@ func (h *BookHandler) DeleteBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.service.Delete(id)
+	err = h.bookService.Delete(id)
 
 	if err != nil {
 		switch err {

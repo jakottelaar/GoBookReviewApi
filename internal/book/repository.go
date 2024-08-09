@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/jakottelaar/gobookreviewapp/pkg/common"
@@ -29,13 +28,11 @@ func NewBookRepository(db *sql.DB) BookRepository {
 
 func (r *bookRepository) Save(book *Book) (*Book, error) {
 	query := `
-		INSERT INTO books (id, title, author, published_year, isbn) 
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO books (id, title, author, published_year, isbn, user_id) 
+		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id, created_at`
 
-	err := r.db.QueryRow(query, book.ID, book.Title, book.Author, book.PublishedYear, book.ISBN).Scan(&book.ID, &book.CreatedAt)
-
-	fmt.Println("Book created at: ", book.CreatedAt)
+	err := r.db.QueryRow(query, book.ID, book.Title, book.Author, book.PublishedYear, book.ISBN, book.UserId).Scan(&book.ID, &book.CreatedAt)
 
 	if err != nil {
 		return nil, err

@@ -1,6 +1,3 @@
-//go:build unit
-// +build unit
-
 package book
 
 import (
@@ -19,6 +16,8 @@ func TestCreateBookService(t *testing.T) {
 	service := NewBookService(mockRepo)
 
 	t.Run("Create book service: Successfully create a book", func(t *testing.T) {
+		userID := uuid.New()
+
 		createReq := &CreateBookRequest{
 			Title:         "Test Book",
 			Author:        "Test Author",
@@ -33,11 +32,12 @@ func TestCreateBookService(t *testing.T) {
 			PublishedYear: createReq.PublishedYear,
 			ISBN:          createReq.ISBN,
 			CreatedAt:     time.Now(),
+			UserId:        userID,
 		}
 
 		mockRepo.On("Save", mock.AnythingOfType("*book.Book")).Return(expectedBook, nil)
 
-		result, err := service.Create(createReq)
+		result, err := service.Create(createReq, userID.String())
 
 		require.NoError(t, err)
 		assert.Equal(t, expectedBook, result)

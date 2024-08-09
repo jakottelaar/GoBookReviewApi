@@ -10,7 +10,7 @@ import (
 
 type BookService interface {
 	GetBookById(id string) (*Book, error)
-	Create(book *CreateBookRequest) (*Book, error)
+	Create(book *CreateBookRequest, userId string) (*Book, error)
 	Update(id string, book *UpdateBookRequest) (*Book, error)
 	Delete(id string) error
 }
@@ -25,7 +25,7 @@ func NewBookService(repo BookRepository) BookService {
 	}
 }
 
-func (s *bookService) Create(book *CreateBookRequest) (*Book, error) {
+func (s *bookService) Create(book *CreateBookRequest, userId string) (*Book, error) {
 
 	newId := uuid.New()
 
@@ -35,6 +35,7 @@ func (s *bookService) Create(book *CreateBookRequest) (*Book, error) {
 		Author:        book.Author,
 		PublishedYear: book.PublishedYear,
 		ISBN:          book.ISBN,
+		UserId:        uuid.MustParse(userId),
 	}
 
 	savedBook, err := s.repo.Save(newBook)

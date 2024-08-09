@@ -35,6 +35,11 @@ func (m *MockUserRepository) Delete(id string) error {
 	return args.Error(0)
 }
 
+func (m *MockUserService) FindById(id string) (*User, error) {
+	args := m.Called(id)
+	return args.Get(0).(*User), args.Error(1)
+}
+
 func (m *MockUserService) Update(id string, req *UpdateUserRequest) (*User, error) {
 	args := m.Called(id, req)
 	return args.Get(0).(*User), args.Error(1)

@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -28,8 +29,11 @@ func SetupRoutes() *chi.Mux {
 	// Database
 	db := database.GetDB()
 
+	//
+	jwtSecret := os.Getenv("JWT_SECRET")
+
 	//JWT
-	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
+	tokenAuth := jwtauth.New("HS256", []byte(jwtSecret), nil)
 
 	// Setup book services
 	bookRepository := book.NewBookRepository(db)

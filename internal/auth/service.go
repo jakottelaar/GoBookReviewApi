@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"os"
 	"time"
 
 	"github.com/alexedwards/argon2id"
@@ -39,7 +40,9 @@ func (s *authService) Login(req *LoginRequest) (string, error) {
 		return "", err
 	}
 
-	TokenAuth = jwtauth.New("HS256", []byte("secret"), nil, jwt.WithAcceptableSkew(30*time.Second))
+	jwtSecret := os.Getenv("JWT_SECRET")
+
+	TokenAuth = jwtauth.New("HS256", []byte(jwtSecret), nil, jwt.WithAcceptableSkew(30*time.Second))
 
 	_, tokenString, _ := TokenAuth.Encode(map[string]interface{}{"user_id": user.ID}) //Handle err or security risk?
 

@@ -2,21 +2,7 @@ package book
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
-
-type Book struct {
-	ID            uuid.UUID
-	Title         string
-	Author        string
-	PublishedYear int
-	ISBN          string
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-	DeletedAt     *time.Time
-	UserId        uuid.UUID
-}
 
 type CreateBookRequest struct {
 	Title         string `json:"title" validate:"required" example:"The Great Gatsby"`

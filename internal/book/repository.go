@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jakottelaar/gobookreviewapp/pkg/common"
 )
 
@@ -26,6 +27,18 @@ func NewBookRepository(db *sql.DB) BookRepository {
 	}
 }
 
+type Book struct {
+	ID            uuid.UUID
+	Title         string
+	Author        string
+	PublishedYear int
+	ISBN          string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	DeletedAt     *time.Time
+	UserId        uuid.UUID
+}
+
 func (r *bookRepository) Save(book *Book) (*Book, error) {
 	query := `
 		INSERT INTO books (id, title, author, published_year, isbn, user_id) 
@@ -44,7 +57,7 @@ func (r *bookRepository) Save(book *Book) (*Book, error) {
 
 func (r *bookRepository) FindById(id string) (*Book, error) {
 	query := `
-		SELECT id, title, author, published_year, isbn, created_at, updated_at
+		SELECT id, title, author, published_year, isbn, created_at, updated_at, user_id
 		FROM books
 		WHERE id = $1`
 
@@ -53,7 +66,7 @@ func (r *bookRepository) FindById(id string) (*Book, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := r.db.QueryRowContext(ctx, query, id).Scan(&book.ID, &book.Title, &book.Author, &book.PublishedYear, &book.ISBN, &book.CreatedAt, &book.UpdatedAt)
+	err := r.db.QueryRowContext(ctx, query, id).Scan(&book.ID, &book.Title, &book.Author, &book.PublishedYear, &book.ISBN, &book.CreatedAt, &book.UpdatedAt, &book.UserId)
 
 	if err != nil {
 		switch {

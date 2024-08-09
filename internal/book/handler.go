@@ -127,6 +127,7 @@ func (h *BookHandler) GetBookById(w http.ResponseWriter, r *http.Request) {
 		ISBN:          book.ISBN,
 		CreatedAt:     book.CreatedAt,
 		UpdatedAt:     book.UpdatedAt,
+		UserID:        book.UserId.String(),
 	}
 
 	common.WriteJSON(w, http.StatusOK, common.Envelope{"book": resp}, nil)

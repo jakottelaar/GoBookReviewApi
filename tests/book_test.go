@@ -68,7 +68,6 @@ func TestCreateBookRequest(t *testing.T) {
 
 	req, err := http.NewRequest("POST", baseBooksEndpointURL, strings.NewReader(reqBody))
 	require.NoError(t, err)
-
 	req.Header.Set("Authorization", "Bearer "+bookUserToken)
 
 	res, err := http.DefaultClient.Do(req)
@@ -93,31 +92,32 @@ func TestCreateBookRequest(t *testing.T) {
 	assert.Contains(t, book, "created_at")
 }
 
-// func TestGetBookByIdRequest(t *testing.T) {
+func TestGetBookByIdRequest(t *testing.T) {
 
-// 	req, err := http.NewRequest("GET", baseBooksEndpointURL+bookId, nil)
-// 	if err != nil {
-// 		t.Fatalf("Could not create request: %v", err)
-// 	}
+	req, err := http.NewRequest("GET", baseBooksEndpointURL+bookId, nil)
+	require.NoError(t, err)
+	req.Header.Set("Authorization", "Bearer "+bookUserToken)
 
-// 	res, err := http.DefaultClient.Do(req)
-// 	require.NoError(t, err)
-// 	defer res.Body.Close()
+	res, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+	defer res.Body.Close()
 
-// 	require.Equal(t, http.StatusOK, res.StatusCode)
+	require.Equal(t, http.StatusOK, res.StatusCode)
 
-// 	var response map[string]interface{}
-// 	err = json.NewDecoder(res.Body).Decode(&response)
-// 	require.NoError(t, err)
+	var response map[string]interface{}
+	err = json.NewDecoder(res.Body).Decode(&response)
+	require.NoError(t, err)
 
-// 	book, ok := response["book"].(map[string]interface{})
-// 	assert.True(t, ok)
-// 	assert.Equal(t, bookId, book["id"].(string))
-// 	assert.Equal(t, "Book Title", book["title"].(string))
-// 	assert.Equal(t, "Book Author", book["author"].(string))
-// 	assert.Equal(t, float64(2020), book["published_year"].(float64))
-// 	assert.Equal(t, "9780743273565", book["isbn"].(string))
-// }
+	book, ok := response["book"].(map[string]interface{})
+	assert.True(t, ok)
+	assert.Equal(t, bookId, book["id"].(string))
+	assert.Equal(t, "Book Title", book["title"].(string))
+	assert.Equal(t, "Book Author", book["author"].(string))
+	assert.Equal(t, float64(2020), book["published_year"].(float64))
+	assert.Equal(t, "9780743273565", book["isbn"].(string))
+	assert.Contains(t, book, "created_at")
+	assert.Contains(t, book, "user_id")
+}
 
 // func TestUpdateBookById(t *testing.T) {
 // 	updateReqBody := `{

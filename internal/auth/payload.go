@@ -5,7 +5,7 @@ import "time"
 type RegisterRequest struct {
 	Username string `json:"username" validate:"required" example:"exampleuser"`
 	Email    string `json:"email" validate:"required,email" example:"exampleuser@mail.com"`
-	Password string `json:"password" validate:"required" example:"password"`
+	Password string `json:"password" validate:"required,min=8,max=50" example:"password"`
 }
 
 type RegisterResponse struct {
@@ -17,5 +17,5 @@ type RegisterResponse struct {
 
 type LoginRequest struct {
 	Email    string `json:"email" validate:"required,email" example:"exampleuser@mail.com"`
-	Password string `json:"password" validate:"required" example:"password"`
+	Password string `json:"password" validate:"required,min=8,max=50" example:"password"`
 }

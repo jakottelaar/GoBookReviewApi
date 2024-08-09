@@ -1,6 +1,3 @@
-//go:build integration
-// +build integration
-
 package tests
 
 import (
@@ -23,7 +20,7 @@ func TestCreateBookRequest(t *testing.T) {
 		"isbn": "9780743273565"
 	}`
 
-	req, err := http.NewRequest("POST", baseBooksEndpointUrl, strings.NewReader(reqBody))
+	req, err := http.NewRequest("POST", baseBooksEndpointURL, strings.NewReader(reqBody))
 	require.NoError(t, err)
 
 	res, err := http.DefaultClient.Do(req)
@@ -49,7 +46,7 @@ func TestCreateBookRequest(t *testing.T) {
 
 func TestGetBookByIdRequest(t *testing.T) {
 
-	req, err := http.NewRequest("GET", baseBooksEndpointUrl+bookId, nil)
+	req, err := http.NewRequest("GET", baseBooksEndpointURL+bookId, nil)
 	if err != nil {
 		t.Fatalf("Could not create request: %v", err)
 	}
@@ -81,7 +78,7 @@ func TestUpdateBookById(t *testing.T) {
 		"isbn": "9780743273565"
 	}`
 
-	req, err := http.NewRequest("PUT", baseBooksEndpointUrl+bookId, strings.NewReader(updateReqBody))
+	req, err := http.NewRequest("PUT", baseBooksEndpointURL+bookId, strings.NewReader(updateReqBody))
 	if err != nil {
 		t.Fatalf("Could not create request: %v", err)
 	}
@@ -109,7 +106,7 @@ func TestUpdateBookById(t *testing.T) {
 
 func TestDeleteBookById(t *testing.T) {
 
-	req, err := http.NewRequest("DELETE", baseBooksEndpointUrl+bookId, nil)
+	req, err := http.NewRequest("DELETE", baseBooksEndpointURL+bookId, nil)
 	if err != nil {
 		t.Fatalf("Could not create request: %v", err)
 	}
@@ -126,6 +123,6 @@ func TestDeleteBookById(t *testing.T) {
 
 	message, ok := response["message"]
 	assert.True(t, ok)
-	assert.Equal(t, "Successfully deleted book", message)
+	assert.Equal(t, "book deleted", message)
 
 }

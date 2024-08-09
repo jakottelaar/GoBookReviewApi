@@ -79,8 +79,17 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	createdUser, err := h.service.Register(&req)
 	if err != nil {
-		common.ServerErrorResponse(w, r, err)
-		return
+		switch err {
+		case common.ErrEmailAlreadyExists:
+			common.ConflictedResourceResponse(w, r, err.Error())
+			return
+		case common.ErrUsernameAlreadyExists:
+			common.ConflictedResourceResponse(w, r, err.Error())
+			return
+		default:
+			common.ServerErrorResponse(w, r, err)
+			return
+		}
 	}
 
 	resp := RegisterResponse{

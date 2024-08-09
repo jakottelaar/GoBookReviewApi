@@ -66,10 +66,19 @@ func (r *userRepository) Save(user *User) (*User, error) {
         VALUES ($1, $2, $3, $4)
         RETURNING id, created_at`
 
-	err := r.db.QueryRow(query, user.ID, user.Username, user.Email, user.Password).Scan(&user.ID, &user.CreatedAt)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 
+	err := r.db.QueryRowContext(ctx, query, user.ID, user.Username, user.Email, user.Password).Scan(&user.ID, &user.CreatedAt)
 	if err != nil {
-		return nil, err
+		switch {
+		case err.Error() == "pq: duplicate key value violates unique constraint \"users_email_key\"":
+			return nil, common.ErrEmailAlreadyExists
+		case err.Error() == "pq: duplicate key value violates unique constraint \"users_username_key\"":
+			return nil, common.ErrUsernameAlreadyExists
+		default:
+			return nil, err
+		}
 	}
 
 	return user, nil

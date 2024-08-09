@@ -64,7 +64,7 @@ func TestRegisterUserHandler(t *testing.T) {
 
 func TestLoginUserHandler(t *testing.T) {
 
-	t.Run("POST Login handler: Successfully login a users", func(t *testing.T) {
+	t.Run("POST Login handler: Successfully login a user", func(t *testing.T) {
 		reqBody := LoginRequest{
 			Email:    "testuser@mail.com",
 			Password: "password",

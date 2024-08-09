@@ -7,7 +7,9 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("the requested resource could not be found")
+	ErrNotFound              = errors.New("the requested resource could not be found")
+	ErrEmailAlreadyExists    = errors.New("email already exists")
+	ErrUsernameAlreadyExists = errors.New("username already exists")
 )
 
 func errorResponse(w http.ResponseWriter, r *http.Request, status int, message any) {
@@ -40,4 +42,8 @@ func BadRequestResponse(w http.ResponseWriter, r *http.Request, err error) {
 
 func FailedValidationResponse(w http.ResponseWriter, r *http.Request, errors map[string]string) {
 	errorResponse(w, r, http.StatusUnprocessableEntity, errors)
+}
+
+func ConflictedResourceResponse(w http.ResponseWriter, r *http.Request, message string) {
+	errorResponse(w, r, http.StatusConflict, message)
 }

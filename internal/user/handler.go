@@ -18,6 +18,15 @@ func NewUserHandler(service UserService) *UserHandler {
 	}
 }
 
+// GetUserProfile godoc
+// @Summary Get user profile
+// @Description Get the profile of the authenticated user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Success 200 {object} interface{}
+// @Router /user/profile [get]
 func (h *UserHandler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 
 	_, claims, err := jwtauth.FromContext(r.Context())
@@ -45,6 +54,16 @@ func (h *UserHandler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// UpdateUser godoc
+// @Summary Update user profile
+// @Description Update the profile of the authenticated user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param user body UpdateUserRequest true "User details"
+// @Success 200 {object} interface{}
+// @Router /user/profile [put]
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	_, claims, err := jwtauth.FromContext(r.Context())
@@ -102,6 +121,15 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// DeleteUser godoc
+// @Summary Delete user profile
+// @Description Delete the profile of the authenticated user
+// @Tags user
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Success 200 {object} interface{}
+// @Router /user/profile [delete]
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	_, claims, err := jwtauth.FromContext(r.Context())

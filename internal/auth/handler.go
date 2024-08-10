@@ -17,6 +17,15 @@ func NewAuthHandler(service AuthService) *AuthHandler {
 	}
 }
 
+// Login godoc
+// @Summary Login to the application
+// @Description Login to the application with the provided email and password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param login body LoginRequest true "Login details"
+// @Success 200 {object} interface{}
+// @Router /auth/login [post]
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	var req LoginRequest
@@ -52,6 +61,15 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Register godoc
+// @Summary Register a new user
+// @Description Register a new user with the provided details
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param register body RegisterRequest true "Registration details"
+// @Success 201 {object} interface{}
+// @Router /auth/register [post]
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	var req RegisterRequest

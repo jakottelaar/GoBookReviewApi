@@ -23,12 +23,13 @@ func NewBookHandler(bookService BookService, userService user.UserService) *Book
 
 // CreateBook godoc
 // @Summary Create a new book
-// @Description Create a new book with the provided details
+// @Description Create a new book with the provided details. Requires authentication.
 // @Tags books
 // @Accept json
 // @Produce json
 // @Param book body CreateBookRequest true "Book details"
-// @Success 201 {object} CreateBookResponse
+// @Security Bearer
+// @Success 201 {object} CreateBookResponse "Successfully created book"
 // @Router /books [post]
 func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 
@@ -92,11 +93,12 @@ func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 
 // GetBookById godoc
 // @Summary Get a book by ID
-// @Description Get a book by the provided ID
+// @Description Get a book by the provided ID. Requires authentication.
 // @Tags books
 // @Accept json
 // @Produce json
 // @Param id path string true "Book ID"
+// @Security Bearer
 // @Success 200 {object} GetBookResponse
 // @Router /books/{id} [get]
 func (h *BookHandler) GetBookById(w http.ResponseWriter, r *http.Request) {
@@ -136,12 +138,13 @@ func (h *BookHandler) GetBookById(w http.ResponseWriter, r *http.Request) {
 
 // UpdateBook godoc
 // @Summary Update a book by ID
-// @Description Update a book with the provided details
+// @Description Update a book with the provided details. Requires authentication.
 // @Tags books
 // @Accept json
 // @Produce json
 // @Param id path string true "Book ID" format(uuid)
 // @Param book body UpdateBookRequest true "Book details"
+// @Security Bearer
 // @Success 200 {object} UpdateBookResponse
 // @Router /books/{id} [put]
 func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request) {
@@ -217,11 +220,12 @@ func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request) {
 
 // DeleteBook godoc
 // @Summary Delete a book by ID
-// @Description Delete a book by the provided ID
+// @Description Delete a book by the provided ID. Requires authentication.
 // @Tags books
 // @Accept json
 // @Produce json
 // @Param id path string true "Book ID"
+// @Security Bearer
 // @Success 200 {object} interface{}
 // @Router /books/{id} [delete]
 func (h *BookHandler) DeleteBook(w http.ResponseWriter, r *http.Request) {

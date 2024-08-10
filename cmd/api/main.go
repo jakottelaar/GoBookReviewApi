@@ -20,6 +20,9 @@ import (
 // @schemes		http
 // @produces		json
 // @consumes		json
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
 func main() {
 	cfg, err := config.Load()
 

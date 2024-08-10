@@ -38,8 +38,8 @@ func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := claims["user_id"]
-	user, err := h.userService.FindById(id.(string))
+	userId := claims["user_id"]
+	user, err := h.userService.FindById(userId.(string))
 	if err != nil {
 		common.ServerErrorResponse(w, r, err)
 		return
@@ -69,7 +69,7 @@ func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdBook, err := h.bookService.Create(&req, user.ID.String())
+	createdBook, err := h.bookService.Create(user.ID.String(), &req)
 
 	if err != nil {
 		common.ServerErrorResponse(w, r, err)
@@ -145,6 +145,20 @@ func (h *BookHandler) GetBookById(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {object} UpdateBookResponse
 // @Router /books/{id} [put]
 func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request) {
+
+	_, claims, err := jwtauth.FromContext(r.Context())
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	userId := claims["user_id"]
+	user, err := h.userService.FindById(userId.(string))
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
+
 	id, err := common.GetIdFromRequest(r, "id")
 
 	if err != nil {
@@ -176,7 +190,7 @@ func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	book, err := h.bookService.Update(id, &req)
+	book, err := h.bookService.Update(id, user.ID.String(), &req)
 
 	if err != nil {
 		switch err {
@@ -211,6 +225,20 @@ func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {object} interface{}
 // @Router /books/{id} [delete]
 func (h *BookHandler) DeleteBook(w http.ResponseWriter, r *http.Request) {
+
+	_, claims, err := jwtauth.FromContext(r.Context())
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
+
+	userId := claims["user_id"]
+	user, err := h.userService.FindById(userId.(string))
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
+
 	id, err := common.GetIdFromRequest(r, "id")
 
 	if err != nil {
@@ -218,7 +246,7 @@ func (h *BookHandler) DeleteBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.bookService.Delete(id)
+	err = h.bookService.Delete(id, user.ID.String())
 
 	if err != nil {
 		switch err {

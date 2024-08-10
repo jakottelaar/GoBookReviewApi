@@ -37,7 +37,7 @@ func TestCreateBookService(t *testing.T) {
 
 		mockRepo.On("Save", mock.AnythingOfType("*book.Book")).Return(expectedBook, nil)
 
-		result, err := service.Create(createReq, userID.String())
+		result, err := service.Create(userID.String(), createReq)
 
 		require.NoError(t, err)
 		assert.Equal(t, expectedBook, result)
@@ -105,6 +105,7 @@ func TestUpdateBookService(t *testing.T) {
 	service := NewBookService(mockRepo)
 
 	t.Run("Update book service: Successfully update a book", func(t *testing.T) {
+		userID := uuid.New()
 		bookID := uuid.New()
 
 		updatedBook := &UpdateBookRequest{
@@ -132,14 +133,11 @@ func TestUpdateBookService(t *testing.T) {
 			CreatedAt:     time.Now(),
 		}
 
-		// Set up the mock expectations
 		mockRepo.On("FindById", bookID.String()).Return(existingBook, nil)
 		mockRepo.On("Update", mock.AnythingOfType("*book.Book")).Return(expectedBook, nil)
 
-		// Invoke the service method
-		result, err := service.Update(bookID.String(), updatedBook)
+		result, err := service.Update(bookID.String(), userID.String(), updatedBook)
 
-		// Verify results
 		require.NoError(t, err)
 		assert.Equal(t, expectedBook.Title, result.Title)
 		mockRepo.AssertExpectations(t)
@@ -147,6 +145,7 @@ func TestUpdateBookService(t *testing.T) {
 	})
 
 	t.Run("Update book service: Book not found", func(t *testing.T) {
+		userID := uuid.New()
 		bookID := uuid.New()
 
 		updatedBook := &UpdateBookRequest{
@@ -158,11 +157,11 @@ func TestUpdateBookService(t *testing.T) {
 
 		mockRepo.On("FindById", bookID.String()).Return((*Book)(nil), common.ErrNotFound)
 
-		book, err := service.Update(bookID.String(), updatedBook)
+		result, err := service.Update(bookID.String(), userID.String(), updatedBook)
 
 		require.Error(t, err)
 		assert.Equal(t, common.ErrNotFound, err)
-		assert.Nil(t, book)
+		assert.Nil(t, result)
 
 		mockRepo.AssertExpectations(t)
 	})
@@ -173,11 +172,11 @@ func TestDeleteBookService(t *testing.T) {
 	service := NewBookService(mockRepo)
 
 	t.Run("Delete book service: Successfully delete a book", func(t *testing.T) {
-
-		bookID := uuid.New()
+		userId := uuid.New()
+		bookId := uuid.New()
 
 		existingBook := &Book{
-			ID:            bookID,
+			ID:            bookId,
 			Title:         "Original Title",
 			Author:        "Original Author",
 			PublishedYear: 2000,
@@ -185,10 +184,10 @@ func TestDeleteBookService(t *testing.T) {
 			CreatedAt:     time.Now(),
 		}
 
-		mockRepo.On("FindById", bookID.String()).Return(existingBook, nil)
-		mockRepo.On("Delete", bookID.String()).Return(nil)
+		mockRepo.On("FindById", bookId.String()).Return(existingBook, nil)
+		mockRepo.On("Delete", bookId.String(), userId.String()).Return(nil)
 
-		err := service.Delete(bookID.String())
+		err := service.Delete(bookId.String(), userId.String())
 
 		require.NoError(t, err)
 
@@ -196,11 +195,12 @@ func TestDeleteBookService(t *testing.T) {
 	})
 
 	t.Run("Delete book service: Book not found", func(t *testing.T) {
-		bookID := uuid.New()
+		userId := uuid.New()
+		bookId := uuid.New()
 
-		mockRepo.On("FindById", bookID.String()).Return((*Book)(nil), common.ErrNotFound)
+		mockRepo.On("FindById", bookId.String()).Return((*Book)(nil), common.ErrNotFound)
 
-		err := service.Delete(bookID.String())
+		err := service.Delete(bookId.String(), userId.String())
 
 		require.Error(t, err)
 		assert.Equal(t, common.ErrNotFound, err)

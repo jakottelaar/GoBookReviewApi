@@ -10,9 +10,9 @@ import (
 
 type BookService interface {
 	GetBookById(id string) (*Book, error)
-	Create(book *CreateBookRequest, userId string) (*Book, error)
-	Update(id string, book *UpdateBookRequest) (*Book, error)
-	Delete(id string) error
+	Create(userId string, book *CreateBookRequest) (*Book, error)
+	Update(id string, userId string, book *UpdateBookRequest) (*Book, error)
+	Delete(id string, userId string) error
 }
 
 type bookService struct {
@@ -25,7 +25,7 @@ func NewBookService(repo BookRepository) BookService {
 	}
 }
 
-func (s *bookService) Create(book *CreateBookRequest, userId string) (*Book, error) {
+func (s *bookService) Create(userId string, book *CreateBookRequest) (*Book, error) {
 
 	newId := uuid.New()
 
@@ -65,7 +65,7 @@ func (s *bookService) GetBookById(id string) (*Book, error) {
 
 }
 
-func (s *bookService) Update(id string, updateReq *UpdateBookRequest) (*Book, error) {
+func (s *bookService) Update(id string, userId string, updateReq *UpdateBookRequest) (*Book, error) {
 
 	_, err := s.repo.FindById(id)
 	if err != nil {
@@ -83,6 +83,7 @@ func (s *bookService) Update(id string, updateReq *UpdateBookRequest) (*Book, er
 		Author:        updateReq.Author,
 		PublishedYear: updateReq.PublishedYear,
 		ISBN:          updateReq.ISBN,
+		UserId:        uuid.MustParse(userId),
 	}
 
 	book, err := s.repo.Update(updatedBook)
@@ -100,7 +101,7 @@ func (s *bookService) Update(id string, updateReq *UpdateBookRequest) (*Book, er
 
 }
 
-func (s *bookService) Delete(id string) error {
+func (s *bookService) Delete(id string, userId string) error {
 
 	_, err := s.repo.FindById(id)
 	if err != nil {
@@ -114,7 +115,7 @@ func (s *bookService) Delete(id string) error {
 
 	}
 
-	err = s.repo.Delete(id)
+	err = s.repo.Delete(id, userId)
 
 	if err != nil {
 		return err

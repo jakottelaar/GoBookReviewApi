@@ -10,8 +10,8 @@ type MockBookService struct {
 	mock.Mock
 }
 
-func (m *MockBookService) Create(req *CreateBookRequest, userId string) (*Book, error) {
-	args := m.Called(req, userId)
+func (m *MockBookService) Create(userId string, req *CreateBookRequest) (*Book, error) {
+	args := m.Called(userId, req)
 	return args.Get(0).(*Book), args.Error(1)
 }
 
@@ -20,13 +20,13 @@ func (m *MockBookService) GetBookById(id string) (*Book, error) {
 	return args.Get(0).(*Book), args.Error(1)
 }
 
-func (m *MockBookService) Update(id string, req *UpdateBookRequest) (*Book, error) {
-	args := m.Called(id, req)
+func (m *MockBookService) Update(id string, userId string, req *UpdateBookRequest) (*Book, error) {
+	args := m.Called(id, userId, req)
 	return args.Get(0).(*Book), args.Error(1)
 }
 
-func (m *MockBookService) Delete(id string) error {
-	args := m.Called(id)
+func (m *MockBookService) Delete(id string, userId string) error {
+	args := m.Called(id, userId)
 	return args.Error(0)
 }
 
@@ -45,7 +45,7 @@ func (m *MockBookRepository) Update(book *Book) (*Book, error) {
 	return args.Get(0).(*Book), args.Error(1)
 }
 
-func (m *MockBookRepository) Delete(id string) error {
-	args := m.Called(id)
+func (m *MockBookRepository) Delete(id string, userId string) error {
+	args := m.Called(id, userId)
 	return args.Error(0)
 }

@@ -14,7 +14,7 @@ type BookRepository interface {
 	FindById(id string) (*Book, error)
 	Save(book *Book) (*Book, error)
 	Update(book *Book) (*Book, error)
-	Delete(id string) error
+	Delete(id string, userId string) error
 }
 
 type bookRepository struct {
@@ -84,13 +84,13 @@ func (r *bookRepository) Update(book *Book) (*Book, error) {
 	query := `
 		UPDATE books
 		SET title = $1, author = $2, published_year = $3, isbn = $4
-		WHERE id = $5
+		WHERE id = $5 and user_id = $6
 		RETURNING updated_at`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := r.db.QueryRowContext(ctx, query, book.Title, book.Author, book.PublishedYear, book.ISBN, book.ID).Scan(&book.UpdatedAt)
+	err := r.db.QueryRowContext(ctx, query, book.Title, book.Author, book.PublishedYear, book.ISBN, book.ID, book.UserId).Scan(&book.UpdatedAt)
 
 	if err != nil {
 		switch {
@@ -104,15 +104,15 @@ func (r *bookRepository) Update(book *Book) (*Book, error) {
 	return book, nil
 }
 
-func (r *bookRepository) Delete(id string) error {
+func (r *bookRepository) Delete(id string, userId string) error {
 	query := `
 		DELETE FROM books 
-		WHERE id = $1`
+		WHERE id = $1 and user_id = $2`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	result, err := r.db.ExecContext(ctx, query, id)
+	result, err := r.db.ExecContext(ctx, query, id, userId)
 	if err != nil {
 		return err
 	}

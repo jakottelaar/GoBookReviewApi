@@ -2,19 +2,7 @@ package user
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
-
-type User struct {
-	ID        uuid.UUID
-	Username  string
-	Email     string
-	Password  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time
-}
 
 type CreateUserRequest struct {
 	Username string `json:"username" validate:"required" example:"exampleuser"`

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jakottelaar/gobookreviewapp/pkg/common"
 )
 
@@ -25,6 +26,16 @@ func NewUserRepository(db *sql.DB) UserRepository {
 	return &userRepository{
 		db: db,
 	}
+}
+
+type User struct {
+	ID        uuid.UUID
+	Username  string
+	Email     string
+	Password  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time
 }
 
 func (r *userRepository) FindByEmail(email string) (*User, error) {

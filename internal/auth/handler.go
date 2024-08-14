@@ -65,8 +65,11 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	common.WriteJSON(w, http.StatusOK, resp, nil)
-
+	err = common.WriteJSON(w, http.StatusOK, resp, nil)
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
 }
 
 // Register godoc
@@ -131,6 +134,9 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		Data:   respData,
 	}
 
-	common.WriteJSON(w, http.StatusCreated, resp, nil)
-
+	err = common.WriteJSON(w, http.StatusCreated, resp, nil)
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
 }

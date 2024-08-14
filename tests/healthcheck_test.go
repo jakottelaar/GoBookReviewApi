@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/jakottelaar/gobookreviewapp/api"
@@ -42,7 +43,13 @@ func TestMain(m *testing.M) {
 	baseBooksEndpointURL = testServer.URL + "/v1/api/books/"
 	baseUserEndpointURL = testServer.URL + "/v1/api/users/"
 
-	m.Run()
+	code := m.Run()
+
+	testServer.Close()
+
+	log.Println("Tests finished")
+
+	os.Exit(code)
 
 }
 

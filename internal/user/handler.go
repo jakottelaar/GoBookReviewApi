@@ -50,8 +50,11 @@ func (h *UserHandler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 		CreatedAt: user.CreatedAt,
 	}
 
-	common.WriteJSON(w, http.StatusOK, common.Envelope{"user": resp}, nil)
-
+	err = common.WriteJSON(w, http.StatusOK, common.Envelope{"user": resp}, nil)
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
 }
 
 // UpdateUser godoc
@@ -117,8 +120,11 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt: user.UpdatedAt,
 	}
 
-	common.WriteJSON(w, http.StatusOK, common.Envelope{"user": resp}, nil)
-
+	err = common.WriteJSON(w, http.StatusOK, common.Envelope{"user": resp}, nil)
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
 }
 
 // DeleteUser godoc
@@ -151,6 +157,9 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	common.WriteJSON(w, http.StatusOK, common.Envelope{"message": "user deleted"}, nil)
-
+	err = common.WriteJSON(w, http.StatusOK, common.Envelope{"message": "user deleted"}, nil)
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
 }

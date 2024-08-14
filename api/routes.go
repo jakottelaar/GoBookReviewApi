@@ -51,7 +51,11 @@ func SetupRoutes() *chi.Mux {
 
 	// Health check
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		common.WriteJSON(w, http.StatusOK, common.Envelope{"message": "Health Check OK"}, nil)
+		err := common.WriteJSON(w, http.StatusOK, common.Envelope{"message": "Health Check OK"}, nil)
+		if err != nil {
+			common.ServerErrorResponse(w, r, err)
+			return
+		}
 	})
 
 	// API routes

@@ -67,8 +67,11 @@ func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:     createdBook.CreatedAt,
 	}
 
-	common.WriteJSON(w, http.StatusCreated, common.Envelope{"book": resp}, nil)
-
+	err = common.WriteJSON(w, http.StatusCreated, common.Envelope{"book": resp}, nil)
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
 }
 
 // GetBookById godoc
@@ -110,8 +113,11 @@ func (h *BookHandler) GetBookById(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:     book.UpdatedAt,
 	}
 
-	common.WriteJSON(w, http.StatusOK, common.Envelope{"book": resp}, nil)
-
+	err = common.WriteJSON(w, http.StatusOK, common.Envelope{"book": resp}, nil)
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
 }
 
 // UpdateBook godoc
@@ -177,8 +183,11 @@ func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:     book.CreatedAt,
 	}
 
-	common.WriteJSON(w, http.StatusOK, common.Envelope{"book": resp}, nil)
-
+	err = common.WriteJSON(w, http.StatusOK, common.Envelope{"book": resp}, nil)
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
 }
 
 // DeleteBook godoc
@@ -210,6 +219,9 @@ func (h *BookHandler) DeleteBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	common.WriteJSON(w, http.StatusOK, common.Envelope{"message": "Successfully deleted book"}, nil)
-
+	err = common.WriteJSON(w, http.StatusOK, common.Envelope{"message": "Successfully deleted book"}, nil)
+	if err != nil {
+		common.ServerErrorResponse(w, r, err)
+		return
+	}
 }

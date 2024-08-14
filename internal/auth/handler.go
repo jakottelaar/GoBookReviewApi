@@ -57,7 +57,15 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	common.WriteJSON(w, http.StatusOK, common.Envelope{"access_token": token}, nil)
+	resp := common.SuccessResponse{
+		Status: "Success",
+		Code:   http.StatusOK,
+		Data: map[string]string{
+			"access_token": token,
+		},
+	}
+
+	common.WriteJSON(w, http.StatusOK, resp, nil)
 
 }
 
@@ -110,13 +118,19 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	resp := RegisterResponse{
+	respData := RegisterResponse{
 		ID:        createdUser.ID.String(),
 		Username:  createdUser.Username,
 		Email:     createdUser.Email,
 		CreatedAt: createdUser.CreatedAt,
 	}
 
-	common.WriteJSON(w, http.StatusCreated, common.Envelope{"user": resp}, nil)
+	resp := common.SuccessResponse{
+		Status: "Success",
+		Code:   http.StatusCreated,
+		Data:   respData,
+	}
+
+	common.WriteJSON(w, http.StatusCreated, resp, nil)
 
 }

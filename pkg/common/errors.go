@@ -13,9 +13,13 @@ var (
 )
 
 func errorResponse(w http.ResponseWriter, r *http.Request, status int, message any) {
-	env := Envelope{"error": message}
+	resp := ErrorResponse{
+		Status:  "error",
+		Code:    status,
+		Message: message,
+	}
 
-	err := WriteJSON(w, status, env, nil)
+	err := WriteJSON(w, status, resp, nil)
 	if err != nil {
 		w.WriteHeader(500)
 	}

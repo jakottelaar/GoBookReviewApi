@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jakottelaar/gobookreviewapp/internal/user"
+	"github.com/jakottelaar/gobookreviewapp/pkg/common"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -46,17 +47,19 @@ func TestRegisterUserHandler(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, w.Code)
 		mockService.AssertExpectations(t)
 
-		var response map[string]interface{}
+		var response common.SuccessResponse
 		err := json.Unmarshal(w.Body.Bytes(), &response)
 		require.NoError(t, err)
 
-		user, ok := response["user"].(map[string]interface{})
+		var data map[string]interface{}
+		err = json.Unmarshal(w.Body.Bytes(), &data)
+		require.NoError(t, err)
 
-		assert.True(t, ok)
-		assert.Equal(t, expectedUser.ID.String(), user["id"])
-		assert.Equal(t, expectedUser.Username, user["username"])
-		assert.Equal(t, expectedUser.Email, user["email"])
-		assert.NotEmpty(t, user["created_at"])
+		assert.Equal(t, "Success", response.Status)
+		assert.Equal(t, http.StatusCreated, response.Code)
+		assert.Equal(t, expectedUser.ID.String(), data["id"])
+		assert.Equal(t, expectedUser.Username, data["username"])
+		assert.Equal(t, expectedUser.Email, data["email"])
 
 	})
 
@@ -84,11 +87,13 @@ func TestLoginUserHandler(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 		mockService.AssertExpectations(t)
 
-		var response map[string]interface{}
+		var response common.SuccessResponse
 		err := json.Unmarshal(w.Body.Bytes(), &response)
 		require.NoError(t, err)
 
-		assert.Equal(t, expected, response["access_token"])
+		assert.Equal(t, "Success", response.Status)
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Contains(t, response.Data, "access_token")
 	})
 
 }
